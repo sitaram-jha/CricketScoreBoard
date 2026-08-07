@@ -99,10 +99,6 @@ public:
 
     void updateBall()
     {
-        cout << "\nBall Result (0,1,2,3,4,6): ";
-        int x;
-        cin >> x;
-
         if (totalBalls >= 12)
         {
             cout << "\n====================================\n";
@@ -111,13 +107,20 @@ public:
             cout << "====================================\n";
             return;
         }
+        if (totalRuns >= target)
+        {
+            cout << "\n====================================\n";
+            cout << battingTeam << " Won the Match!\n";
+            cout << "====================================\n";
+            return;
+        }
+        cout << "\nBall Result (0,1,2,3,4,6): ";
+        int x;
+        cin >> x;
 
-        if (totalRuns == target)
-            cout << "India Won !" << endl;
+        int run = x;
 
-        int run = x; 
-
-        if ( run > 6)
+        if (run < 0 || run > 6)
         {
             cout << "Invalid Run\n";
             return;
@@ -152,7 +155,7 @@ public:
         cout << "Match : " << matchName << "\n";
         cout << "Venue : " << venue << "\n";
         cout << "Date  : " << date << "\n\n";
-        cout << battingTeam << " : " << totalRuns  << " (" << fixed << setprecision(1) << overs() << ")\n\n";
+        cout << battingTeam << " : " << totalRuns << " (" << fixed << setprecision(1) << overs() << ")\n\n";
         // fixed -> tells compiler that it is necessary to have 1 value after decimal .
         // if no value is present after decimal then it will automatically add 0 at the end .
         cout << "Current RR : " << fixed << setprecision(2) << crr() << "\n";
@@ -213,7 +216,7 @@ public:
             default:
                 cout << "Invalid choice\n";
             }
-        } while (ch != 5);
+        } while (ch != 4);
     }
 };
 
