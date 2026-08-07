@@ -100,10 +100,7 @@ public:
 
     void updateBall()
     {
-        cout << "\nBall Result (0,1,2,3,4,6,W): ";
-        string x;
-        cin >> x;
-
+        
         if (totalBalls >= 12)
         {
             cout << "\n====================================\n";
@@ -112,7 +109,7 @@ public:
             cout << "====================================\n";
             return;
         }
-
+        
         if (wickets >= 10)
         {
             cout << "\n====================================\n";
@@ -121,9 +118,19 @@ public:
             cout << "====================================\n";
             return;
         }
-
-        if (totalRuns==target) cout << "India Won !" << endl ;
-
+        
+        if (totalRuns >= target)
+        {
+            cout << "\n====================================\n";
+            cout << battingTeam << " Won the Match!\n";
+            cout << "====================================\n";
+            return;
+        }
+        
+        cout << "\nBall Result (0,1,2,3,4,5,6,W): ";
+        string x;
+        cin >> x;
+        
         if (x == "W" || x == "w")
         {
             wickets++;
