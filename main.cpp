@@ -1,7 +1,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <fstream>
 #include <string>
 using namespace std;
 
@@ -23,7 +22,7 @@ class Bowler
 {
 public:
     string name;
-    int balls = 0, runs = 0, wickets = 0;
+    int balls = 0, runs = 0;
     Bowler() {}
     Bowler(string n) : name(n) {}
     double overs() const { return balls / 6 + (balls % 6) / 10.0; }
@@ -38,7 +37,7 @@ public:
         cout << "Bowler : " << name << "\n";
         cout << "Overs : " << fixed << setprecision(1) << overs() << "\n";
         cout << "Runs  : " << runs << "\n";
-        cout << "Wkts  : " << wickets << "\n";
+
         cout << "Eco   : " << fixed << setprecision(2) << economy() << "\n";
     }
 };
@@ -47,7 +46,7 @@ class CricketScoreBoard
 {
     string matchName, venue, date;
     string battingTeam, bowlingTeam;
-    int totalRuns = 0, wickets = 0, totalBalls = 0, target = 0;
+    int totalRuns = 0, totalBalls = 0, target = 0;
 
     Player striker, nonStriker;
     Bowler bowler;
@@ -65,7 +64,7 @@ public:
         target = 30;
 
         totalRuns = 0;
-        wickets = 0;
+
         totalBalls = 0;
 
         striker = Player("Virat Kohli");
@@ -100,8 +99,8 @@ public:
 
     void updateBall()
     {
-        cout << "\nBall Result (0,1,2,3,4,6,W): ";
-        string x;
+        cout << "\nBall Result (0,1,2,3,4,6): ";
+        int x;
         cin >> x;
 
         if (totalBalls >= 12)
@@ -113,35 +112,12 @@ public:
             return;
         }
 
-        if (wickets >= 10)
-        {
-            cout << "\n====================================\n";
-            cout << "All Out!\n";
-            cout << "Innings Over.\n";
-            cout << "====================================\n";
-            return;
-        }
+        if (totalRuns == target)
+            cout << "India Won !" << endl;
 
-        if (totalRuns==target) cout << "India Won !" << endl ;
+        int run = x; 
 
-        if (x == "W" || x == "w")
-        {
-            wickets++;
-            striker.balls++;
-            bowler.balls++;
-            bowler.wickets++;
-            totalBalls++;
-            cout << "WICKET!\n";
-            cin.ignore();
-            cout << "New batsman name: ";
-            getline(cin, striker.name);
-            striker.runs = striker.balls = striker.fours = striker.sixes = 0;
-            return;
-        }
-
-        int run = stoi(x); // stoi means convert string to integer
-
-        if (run < 0 || run > 6)
+        if ( run > 6)
         {
             cout << "Invalid Run\n";
             return;
@@ -176,7 +152,7 @@ public:
         cout << "Match : " << matchName << "\n";
         cout << "Venue : " << venue << "\n";
         cout << "Date  : " << date << "\n\n";
-        cout << battingTeam << " : " << totalRuns << "/" << wickets << " (" << fixed << setprecision(1) << overs() << ")\n\n";
+        cout << battingTeam << " : " << totalRuns  << " (" << fixed << setprecision(1) << overs() << ")\n\n";
         // fixed -> tells compiler that it is necessary to have 1 value after decimal .
         // if no value is present after decimal then it will automatically add 0 at the end .
         cout << "Current RR : " << fixed << setprecision(2) << crr() << "\n";
@@ -212,24 +188,12 @@ public:
         }
     }
 
-    void save()
-    {
-        ofstream file("MatchSummary.txt");
-        file << "Match : " << matchName << "\n";
-        file << "Venue : " << venue << "\n";
-        file << "Date  : " << date << "\n";
-        file << battingTeam << " " << totalRuns << "/" << wickets << " (" << overs() << ")\n";
-        file << "CRR : " << crr() << "\n";
-        file.close();
-        cout << "Saved to MatchSummary.txt\n";
-    }
-
     void menu()
     {
         int ch;
         do
         {
-            cout << "\n1.Update Ball\n2.Show Scoreboard\n3.Match Summary\n4.Save Match\n5.Exit\nChoice : ";
+            cout << "\n1.Update Ball\n2.Show Scoreboard\n3.Match Summary\n4.Exit\nChoice : ";
             cin >> ch;
             switch (ch)
             {
@@ -242,10 +206,8 @@ public:
             case 3:
                 summary();
                 break;
+
             case 4:
-                save();
-                break;
-            case 5:
                 cout << "Thank you!\n";
                 break;
             default:
