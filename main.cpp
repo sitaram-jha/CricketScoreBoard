@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 class Player
@@ -63,10 +64,6 @@ public:
 
         target = 30;
 
-        totalRuns = 0;
-
-        totalBalls = 0;
-
         striker = Player("Virat Kohli");
         nonStriker = Player("Shubman Gill");
         bowler = Bowler("Mitchell Starc");
@@ -99,123 +96,315 @@ public:
 
     void updateBall()
     {
+        // Check if 2 overs are already completed
         if (totalBalls >= 12)
         {
-            cout << "\n====================================\n";
-            cout << "2 Overs Completed!\n";
-            cout << "Innings Over.\n";
-            cout << "====================================\n";
+            cout << "\n";
+            cout << "============================================================\n";
+            cout << "                    INNINGS OVER\n";
+            cout << "============================================================\n";
+            cout << "                    2 Overs Completed!\n";
+            cout << "============================================================\n";
             return;
         }
+
+        // Check if target has already been reached
         if (totalRuns >= target)
         {
-            cout << "\n====================================\n";
-            cout << battingTeam << " Won the Match!\n";
-            cout << "====================================\n";
+            cout << "\n";
+            cout << "============================================================\n";
+            cout << "                 " << battingTeam << " WON!\n";
+            cout << "                    TARGET REACHED\n";
+            cout << "============================================================\n";
             return;
         }
-        cout << "\nBall Result (0,1,2,3,4,6): ";
-        int x;
-        cin >> x;
 
-        int run = x;
+        cout << "\n";
+        cout << "============================================================\n";
+        cout << "                     BALL UPDATE\n";
+        cout << "============================================================\n\n";
 
+        int need = target - totalRuns;
+
+        if (need < 0)
+            need = 0;
+
+        cout << "Current Score : "
+             << battingTeam << " " << totalRuns << "\n";
+
+        cout << "Target        : "
+             << target << "\n";
+
+        cout << "Need          : "
+             << need << " runs\n";
+
+        cout << "Overs         : "
+             << fixed << setprecision(1) << overs() << "\n";
+
+        cout << "Balls Left    : "
+             << ballsLeft() << "\n";
+
+        cout << "\n------------------------------------------------------------\n";
+
+        cout << "\nBall Result (0,1,2,3,4,5,6): ";
+
+        int run;
+        cin >> run;
+
+        // Validate run
         if (run < 0 || run > 6)
         {
-            cout << "Invalid Run\n";
+            cout << "\nInvalid Run! Please enter a value between 0 and 6.\n";
             return;
         }
+
+        // Update team score
         totalRuns += run;
+
+        // Update striker
         striker.runs += run;
         striker.balls++;
+
+        // Update bowler
         bowler.runs += run;
         bowler.balls++;
+
+        // Update total balls
         totalBalls++;
 
+        // Check boundary
         if (run == 4)
+        {
             striker.fours++;
+
+            cout << "\n";
+            cout << "============================================================\n";
+            cout << "                         FOUR!\n";
+            cout << "============================================================\n";
+        }
+
         if (run == 6)
+        {
             striker.sixes++;
 
+            cout << "\n";
+            cout << "============================================================\n";
+            cout << "                          SIX!\n";
+            cout << "============================================================\n";
+        }
+
+        // Dot ball
+        if (run == 0)
+        {
+            cout << "\n";
+            cout << "                         DOT BALL\n";
+        }
+
+        // Change strike for odd runs
         if (run % 2 == 1)
         {
             swap(striker, nonStriker);
         }
+
+        // Change strike at the end of the over
         if (totalBalls % 6 == 0)
         {
             swap(striker, nonStriker);
+
+            cout << "\n";
+            cout << "============================================================\n";
+            cout << "                     OVER COMPLETED\n";
+            cout << "============================================================\n";
+        }
+
+        // Check if target has been reached
+        if (totalRuns >= target)
+        {
+            cout << "\n";
+            cout << "============================================================\n";
+            cout << "                 " << battingTeam << " WON!\n";
+            cout << "                    TARGET REACHED\n";
+            cout << "============================================================\n";
+            return;
         }
     }
-
     void display()
     {
-        cout << "\n=====================================================\n";
-        cout << "              LIVE CRICKET SCOREBOARD\n";
-        cout << "=====================================================\n\n";
-        cout << "Match : " << matchName << "\n";
-        cout << "Venue : " << venue << "\n";
-        cout << "Date  : " << date << "\n\n";
-        cout << battingTeam << " : " << totalRuns << " (" << fixed << setprecision(1) << overs() << ")\n\n";
-        // fixed -> tells compiler that it is necessary to have 1 value after decimal .
-        // if no value is present after decimal then it will automatically add 0 at the end .
-        cout << "Current RR : " << fixed << setprecision(2) << crr() << "\n";
-        if (target > 0)
-        {
-            int need = target - totalRuns;
-            if (need < 0)
-                need = 0;
-            cout << "Target     : " << target << "\n";
-            cout << "Need       : " << need << " runs from " << ballsLeft() << " balls\n";
-            cout << "Required RR: " << fixed << setprecision(2) << rrr() << "\n";
-        }
-        cout << "\n---------------- Batsmen ----------------\n";
-        striker.display();
-        nonStriker.display();
-        cout << "\n---------------- Bowler -----------------\n";
-        bowler.display();
-        cout << "=====================================================\n";
+        cout << "\n\n";
+
+        cout << "============================================================\n";
+        cout << "                 " << battingTeam << " vs " << bowlingTeam << "\n";
+        cout << "                       " << venue << "\n";
+        cout << "                    " << date << "\n";
+        cout << "============================================================\n\n";
+
+        cout << "                         " << battingTeam << "\n";
+
+        cout << "                         "
+             << totalRuns << "\n";
+
+        cout << "                         "
+             << fixed << setprecision(1)
+             << overs() << "\n";
+
+        cout << "\n------------------------------------------------------------\n\n";
+
+        int need = target - totalRuns;
+
+        if (need < 0)
+            need = 0;
+
+        cout << left
+             << setw(18) << "Current RR"
+             << setw(15) << "Target"
+             << setw(15) << "Need"
+             << setw(15) << "Required RR"
+             << "\n";
+
+        cout << left
+             << setw(18) << fixed << setprecision(2) << crr()
+             << setw(15) << target
+             << setw(15) << need
+             << setw(15) << fixed << setprecision(2) << rrr()
+             << "\n";
+
+        cout << "\n------------------------------------------------------------\n\n";
+
+        cout << "BATSMEN\n\n";
+
+        cout << left
+             << setw(22) << striker.name
+             << striker.runs << " (" << striker.balls << ")"
+             << "    4s:" << striker.fours
+             << "   6s:" << striker.sixes
+             << "\n";
+
+        cout << left
+             << setw(22) << nonStriker.name
+             << nonStriker.runs << " (" << nonStriker.balls << ")"
+             << "    4s:" << nonStriker.fours
+             << "   6s:" << nonStriker.sixes
+             << "\n";
+
+        cout << "\n------------------------------------------------------------\n\n";
+
+        cout << "BOWLER\n\n";
+
+        cout << "Name   : " << bowler.name << "\n";
+
+        cout << "Overs  : "
+             << fixed << setprecision(1)
+             << bowler.overs() << "\n";
+
+        cout << "Runs   : "
+             << bowler.runs << "\n";
+
+        cout << "Eco    : "
+             << fixed << setprecision(2)
+             << bowler.economy() << "\n";
+
+        cout << "\n============================================================\n";
     }
 
     void summary()
     {
-        cout << "\n========= MATCH SUMMARY =========\n";
-        display();
-        if (target > 0)
+        cout << "\n";
+
+        cout << "============================================================\n";
+        cout << "                    MATCH SUMMARY\n";
+        cout << "============================================================\n\n";
+
+        cout << "Match       : " << matchName << "\n";
+        cout << "Venue       : " << venue << "\n";
+        cout << "Date        : " << date << "\n";
+
+        cout << "\n------------------------------------------------------------\n\n";
+
+        cout << "Final Score : "
+             << battingTeam << " "
+             << totalRuns << "\n";
+
+        cout << "Overs       : "
+             << fixed << setprecision(1)
+             << overs() << "\n";
+
+        cout << "Current RR  : "
+             << fixed << setprecision(2)
+             << crr() << "\n";
+
+        cout << "Target      : "
+             << target << "\n";
+
+        cout << "\n------------------------------------------------------------\n";
+
+        if (totalRuns >= target)
         {
-            if (totalRuns >= target)
-                cout << "\n"
-                     << battingTeam << " won the match.\n";
-            else if (totalBalls >= 12)
-                cout << "\n"
-                     << bowlingTeam << " won the match.\n";
+            cout << "\nResult      : "
+                 << battingTeam
+                 << " WON THE MATCH!\n";
         }
+        else if (totalBalls >= 12)
+        {
+            cout << "\nResult      : "
+                 << bowlingTeam
+                 << " WON THE MATCH!\n";
+        }
+        else
+        {
+            cout << "\nResult      : MATCH STILL IN PROGRESS\n";
+        }
+
+        cout << "\n============================================================\n";
     }
 
     void menu()
     {
         int ch;
+
         do
         {
-            cout << "\n1.Update Ball\n2.Show Scoreboard\n3.Match Summary\n4.Exit\nChoice : ";
+            cout << "\n";
+
+            cout << "============================================================\n";
+            cout << "                    MATCH CONTROLS\n";
+            cout << "============================================================\n\n";
+
+            cout << "              [1] UPDATE BALL\n";
+            cout << "              [2] LIVE SCOREBOARD\n";
+            cout << "              [3] MATCH SUMMARY\n";
+            cout << "              [4] EXIT\n";
+
+            cout << "\n============================================================\n";
+            cout << "              Enter Choice : ";
+
             cin >> ch;
+
             switch (ch)
             {
             case 1:
                 updateBall();
                 break;
+
             case 2:
                 display();
                 break;
+
             case 3:
                 summary();
                 break;
 
             case 4:
-                cout << "Thank you!\n";
+                cout << "\n";
+                cout << "============================================================\n";
+                cout << "              THANK YOU FOR USING\n";
+                cout << "               CRICKET SCOREBOARD\n";
+                cout << "============================================================\n";
                 break;
+
             default:
-                cout << "Invalid choice\n";
+                cout << "\nInvalid choice! Please select 1-4.\n";
             }
+
         } while (ch != 4);
     }
 };
